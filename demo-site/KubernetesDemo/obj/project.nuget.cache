@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "t/1TRN1jJv/RYIxlOxc3DUndV8iesvCS4iWlYw4ms4VTrpi+ERXLt2ahJqazuUSs04BhVB2G+tx9WweGF6h8nw==",
+  "success": true,
+  "projectFilePath": "/Users/nickorlow/programming/personal/KubernetesDemo/KubernetesDemo/KubernetesDemo.csproj",
+  "expectedPackageFiles": [
+    "/Users/nickorlow/.nuget/packages/bcrypt.net-next/4.0.3/bcrypt.net-next.4.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

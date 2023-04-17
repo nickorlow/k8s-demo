@@ -1,0 +1,63 @@
+@page "/functions"
+@using BCrypt.Net
+@using System.Threading
+@using System.Net.Mime
+
+<PageTitle>Demo Functions</PageTitle>
+
+<h1>Demo Functions</h1>
+
+<button class="btn btn-primary" @onclick="CauseMemoryLeak">Memory Leak</button>
+<button class="btn btn-primary" @onclick="SpikeCPU">Spike CPU</button>
+<button class="btn btn-primary" @onclick="Crash">Crash</button>
+
+@code {
+
+    public class MemoryObject
+    {
+        string Name { get; set; }
+
+        public MemoryObject(string s)
+        {
+            Name = s;
+        }
+    }
+
+    static List<MemoryObject> BigList = new List<MemoryObject>();
+    
+    // Infinitely add object to a static list 
+    public void CauseMemoryLeak()
+    {
+        while (true)
+        {
+            BigList.Add(new MemoryObject(Guid.NewGuid().ToString()));
+        }
+    }
+
+    // Simulates a crash by shutting down the server with a nonzero exit code
+    public void Crash()
+    {
+        System.Environment.Exit(1);
+    }
+    
+    // Generates a bunch of threads that perform CPU intensive work
+    public void SpikeCPU()
+    {
+        while (true)
+        {
+            Thread thread = new Thread(new ThreadStart(SpikeCPUThread));
+            thread.Start();
+        }
+    }
+
+    // Infinitely hash and verify a password using BCrypt
+    public void SpikeCPUThread()
+    {
+        while (true)
+        {
+            string pass = Guid.NewGuid().ToString();
+            string hash = BCrypt.HashPassword(pass);
+            BCrypt.Verify(pass, hash);
+        }
+    }
+}
