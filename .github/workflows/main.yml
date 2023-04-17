@@ -50,5 +50,5 @@ jobs:
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:1.0.0
-            main
+            latest
           labels: ${{ steps.meta.outputs.labels }}
