@@ -49,5 +49,5 @@ jobs:
           context: ./demo-site/KubernetesDemo
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:2.0.0
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:1.0.0
           labels: ${{ steps.meta.outputs.labels }}
