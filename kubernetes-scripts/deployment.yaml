@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: demo-site
+  name: demo-site
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: demo-site
+  template:
+    metadata:
+      labels:
+        app: demo-site
+    spec:
+      containers:
+      - image: ghcr.io/nickorlow/k8s-demo:1.0.0
+        imagePullPolicy: Always
+        name: demo-site
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "64m"
+          limits:
+            memory: "1024Mi"
+            cpu: "512m"
+        livenessProbe:
+          httpGet:
+              path: /
+              port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 1
+          failureThreshold: 1
+
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: demo-site-svc
+  name: demo-site-svc
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: demo-site 
+  type: NodePort
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo-site-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"  
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "stickounet"
+    nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "172800" 
+    nginx.ingress.kubernetes.io/server-snippets: |
+      location / {
+        proxy_http_version 1.1;
+        proxy_set_header   Upgrade $http_upgrade;
+        proxy_set_header   Connection keep-alive;
+        proxy_set_header   Connection "Upgrade";
+        proxy_set_header   Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+      }
+spec:
+  rules:
+  - host: demo-site.local 
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: demo-site-svc
+            port:
+              number: 80
+
